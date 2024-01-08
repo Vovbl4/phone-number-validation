@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://iti-cdn.netlify.app/css/demo.css" rel="stylesheet">
-    <link href="https://iti-cdn.netlify.app/css/intlTelInput.css" rel="stylesheet">
+    <link href="./css/demo.css" rel="stylesheet">
+    <link href="./css/intlTelInput.css" rel="stylesheet">
     <title>Phone number validation</title>
 </head>
 <body>
@@ -14,7 +14,7 @@
         <button type="submit">Submit</button>
     </form>
 
-    <script src="https://iti-cdn.netlify.app/js/intlTelInput.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/intlTelInput.min.js"></script>
     <script src="https://unpkg.com/imask"></script>
     <script>
       document.addEventListener("DOMContentLoaded", function() {
@@ -22,7 +22,8 @@
         var iti = window.intlTelInput(input, {
             nationalMode: false,
             separateDialCode: true,
-            utilsScript: "https://iti-cdn.netlify.app/js/utils.js" // path to utils.js script from intlTelInput
+            preferredCountries: ["md", "ro", "ua"],
+            utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/utils.js" // path to utils.js script from intlTelInput
         });
 
         var maskInstance;
