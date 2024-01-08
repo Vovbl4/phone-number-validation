@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="./css/demo.css" rel="stylesheet">
-    <link href="./css/intlTelInput.css" rel="stylesheet">
+    <link href="https://iti-cdn.netlify.app/css/demo.css" rel="stylesheet">
+    <link href="https://iti-cdn.netlify.app/css/intlTelInput.css" rel="stylesheet">
     <title>Phone number validation</title>
 </head>
 <body>
@@ -14,30 +14,52 @@
         <button type="submit">Submit</button>
     </form>
 
-    <script src="./js/intlTelInput.js"></script>
+    <script src="https://iti-cdn.netlify.app/js/intlTelInput.js"></script>
+    <script src="https://unpkg.com/imask"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-          var input = document.querySelector("#phone");
-          var iti = window.intlTelInput(input, {
+      document.addEventListener("DOMContentLoaded", function() {
+        var input = document.querySelector("#phone");
+        var iti = window.intlTelInput(input, {
             nationalMode: false,
             separateDialCode: true,
-          });
-          input.addEventListener('keydown', function(e) {
-            // Allow: backspace, delete, tab, escape, enter and the following
-            var allowedKeys = [46, 8, 9, 27, 13, 110, 190];
-            // Allow: Ctrl+A, Command+A, and other command combinations
-            if ((e.keyCode === 65 && (e.ctrlKey === true || e.metaKey === true)) ||
-                (e.keyCode >= 35 && e.keyCode <= 40) || // home, end, left, right, down, up
-                (allowedKeys.indexOf(e.keyCode) !== -1) || // backspace, delete, etc.
-                (e.keyCode >= 48 && e.keyCode <= 57 && !e.shiftKey) || // top row numbers
-                (e.keyCode >= 96 && e.keyCode <= 105) // numpad numbers
-            ) {
-                // Let it happen, don't do anything
-                return;
-            }
-            e.preventDefault(); // Prevent all other keys
-          });
+            utilsScript: "https://iti-cdn.netlify.app/js/utils.js" // path to utils.js script from intlTelInput
         });
+
+        var maskInstance;
+
+        // Function to update the mask based on the country code length
+        function updateMask(countryCode) {
+            if (maskInstance) {
+                maskInstance.destroy();
+            }
+
+            var maskPattern = '';
+            switch (countryCode.length) {
+                case 1: maskPattern = '(000)000-00-00'; break;
+                case 2: maskPattern = '(000)000-00-0'; break;
+                case 3: maskPattern = '(000)000-00'; break;
+            }
+
+            maskInstance = IMask(input, {
+                mask: maskPattern,
+                definitions: {
+                    '1': /[1]/, // Placeholder for the first digit of the country code
+                    '2': /[2]/, // Placeholder for the second digit of the country code
+                    '3': /[3]/, // Placeholder for the third digit of the country code
+                },
+            });
+        }
+
+        // Set initial country code and update mask
+        var initialCountryCode = iti.getSelectedCountryData().dialCode;
+        updateMask(initialCountryCode);
+
+        // Update the mask when the country changes
+        input.addEventListener('countrychange', function() {
+            var countryCode = iti.getSelectedCountryData().dialCode;
+            updateMask(countryCode);
+        });
+    });
       </script>
 </body>
 </html>
